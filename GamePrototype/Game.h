@@ -1,5 +1,8 @@
 #pragma once
 #include "BaseGame.h"
+#include "vector"
+class Player;
+class Enemy;
 class Game : public BaseGame
 {
 public:
@@ -22,9 +25,15 @@ public:
 	void ProcessMouseUpEvent( const SDL_MouseButtonEvent& e ) override;
 
 private:
-
 	// FUNCTIONS
 	void Initialize();
 	void Cleanup( );
 	void ClearBackground( ) const;
+
+	// OWN MEMBERS
+	Player* m_Player;
+	Point2f m_MousePos;
+	std::vector<Enemy*> m_enemies;
+
+	Enemy* CreateNewEnemy();
 };
