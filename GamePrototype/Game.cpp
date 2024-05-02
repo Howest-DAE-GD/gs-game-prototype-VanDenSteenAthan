@@ -100,7 +100,7 @@ void Game::ProcessMouseUpEvent( const SDL_MouseButtonEvent& e )
 
 void Game::ClearBackground( ) const
 {
-	glClearColor( 0.25f, 0.48f, 0.48f, 1.0f );
+	glClearColor( 0.30f, 0.35f, 0.35f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT );
 }
 

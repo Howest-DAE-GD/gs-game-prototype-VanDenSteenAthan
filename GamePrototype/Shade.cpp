@@ -12,7 +12,7 @@ Shade::Shade(ShadeType type)
     case ShadeType::Granite:
         m_Size = 45.0f;
         m_Speed = 55.0f;
-        m_Color = Color4f{ 0.38f, 0.252f, 0.207f, 1.f };
+        m_Color = Color4f{ 0.58f, 0.252f, 0.207f, 1.f };
         break;
     case ShadeType::Yellow:
         m_Size = 45.0f;

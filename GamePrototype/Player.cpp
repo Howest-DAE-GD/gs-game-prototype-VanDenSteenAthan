@@ -47,12 +47,14 @@ void Player::Draw(const Point2f& currMousePos) const
 {
 	DrawSquare(m_Shade.getColor());
 
-	utils::SetColor(Color4f{ 0.f, 0.f, 0.f, 0.85f });
-	utils::DrawRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH }, 3.f);
-
-	utils::SetColor(Color4f{ m_targetShade.getColor().r, m_targetShade.getColor().g, m_targetShade.getColor().b, ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
+	utils::SetColor(Color4f{ m_targetShade.getColor().r * 0.4f, m_targetShade.getColor().g * 0.4f, m_targetShade.getColor().b * 0.4f, 1.f });
 	utils::FillRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH * ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
 	
+	utils::SetColor(Color4f{ m_targetShade.getColor().r, m_targetShade.getColor().g, m_targetShade.getColor().b, ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
+	utils::FillRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH * ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
+
+	utils::SetColor(Color4f{ 0.f, 0.f, 0.f, 0.85f });
+	utils::DrawRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH }, 3.f);
 
 	if (m_isPressed)
 	{
