@@ -1,12 +1,25 @@
 #include "pch.h"
 #include "Player.h"
+#include "Texture.h"
 
 Player::Player(float x, float y, float size)
 	: Square(x, y, size), m_Velocity{}, m_OriginalPoint{}, m_isPressed{}, m_Shade{ (ShadeType)(rand() % 4) },
-	m_progressNewShade{}, m_mistakes{}, m_targetShade{ (ShadeType)0},
+	m_progressNewShade{}, m_lives{5}, m_targetShade{ (ShadeType)0},
 	m_NEEDED_KILLS{10}
 {
+	m_txtTargetShade = nullptr;
 	NewTargetShade();
+}
+
+Player::~Player()
+{
+	delete m_txtTargetShade;
+}
+
+void Player::UpdateTXT()
+{
+	if(m_txtTargetShade != nullptr) delete m_txtTargetShade;
+	m_txtTargetShade = new Texture("Target: " + m_targetShade.GetShadeName(), TXT_FONT_FILE, TXT_FONT_SIZE, Color4f{0.f, 0.f, 0.f, 1.f});
 }
 
 void Player::Update(float elapsedSec, const Rectf& viewPort)
@@ -14,8 +27,8 @@ void Player::Update(float elapsedSec, const Rectf& viewPort)
 	m_Position.x += m_Velocity.x * elapsedSec;
 	m_Position.y += m_Velocity.y * elapsedSec;
 
-	m_Velocity.x *= 0.995f;
-	m_Velocity.y *= 0.995f;
+	m_Velocity.x *= 0.99f;
+	m_Velocity.y *= 0.99f;
 
 	if (m_Position.y < viewPort.bottom)
 	{
@@ -42,15 +55,15 @@ void Player::Update(float elapsedSec, const Rectf& viewPort)
 		m_Position.x = viewPort.width - m_WIDTH;
 	}
 }
-#include <iostream>
-void Player::Draw(const Point2f& currMousePos) const
-{
-	DrawSquare(m_Shade.getColor());
 
-	utils::SetColor(Color4f{ m_targetShade.getColor().r * 0.4f, m_targetShade.getColor().g * 0.4f, m_targetShade.getColor().b * 0.4f, 1.f });
+void Player::Draw(const Point2f& currMousePos, const Rectf& viewPort) const
+{
+	DrawSquare(m_Shade.GetColor());
+
+	utils::SetColor(Color4f{ m_targetShade.GetColor().r * 0.4f, m_targetShade.GetColor().g * 0.4f, m_targetShade.GetColor().b * 0.4f, 1.f });
 	utils::FillRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH * ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
 	
-	utils::SetColor(Color4f{ m_targetShade.getColor().r, m_targetShade.getColor().g, m_targetShade.getColor().b, ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
+	utils::SetColor(Color4f{ m_targetShade.GetColor().r, m_targetShade.GetColor().g, m_targetShade.GetColor().b, ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
 	utils::FillRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH * ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
 
 	utils::SetColor(Color4f{ 0.f, 0.f, 0.f, 0.85f });
@@ -62,6 +75,21 @@ void Player::Draw(const Point2f& currMousePos) const
 		utils::FillEllipse(m_OriginalPoint, 8.f, 8.f);
 		utils::DrawLine(m_OriginalPoint, currMousePos, 3.f);
 	}
+
+	DrawHUD(viewPort);
+}
+
+void Player::DrawHUD(const Rectf& viewPort) const
+{
+	const float PADDING_INSIDE = { 5.f };
+	const float PADDING_OUTSIDE = { 15.f };
+	Point2f pointTarget{ PADDING_INSIDE ,viewPort.height - m_txtTargetShade->GetHeight() - 2 * PADDING_INSIDE - PADDING_OUTSIDE };
+
+	utils::SetColor(m_targetShade.GetColor());
+	utils::FillRect(pointTarget, m_txtTargetShade->GetWidth() + 2 * PADDING_INSIDE, m_txtTargetShade->GetHeight() + 2 * PADDING_INSIDE);
+	utils::SetColor(Color4f{0.f, 0.f, 0.f, 1.f});
+	utils::DrawRect(pointTarget, m_txtTargetShade->GetWidth() + 2 * PADDING_INSIDE, m_txtTargetShade->GetHeight() + 2 * PADDING_INSIDE, 2.f);
+	m_txtTargetShade->Draw(Point2f{pointTarget.x + PADDING_INSIDE, pointTarget.y + PADDING_INSIDE});
 }
 
 bool Player::isInside(float cursorX, float cursorY) const {
@@ -107,7 +135,8 @@ void Player::Attack(Shade& shade)
 	}
 	else
 	{
-		++m_mistakes;
+		if (shade.GetShadeType() == ShadeType::Granite) m_lives = 0;
+		else --m_lives;
 	}
 }
 
@@ -117,4 +146,11 @@ void Player::NewTargetShade()
 	{
 		m_targetShade = Shade{ (ShadeType)(rand() % 4) };
 	} while (m_Shade == m_targetShade);
+
+	UpdateTXT();
+}
+
+int Player::GetLives() const
+{
+	return m_lives;
 }

@@ -40,9 +40,18 @@ void Game::Update( float elapsedSec )
 		if (utils::IsOverlapping(m_Player->GetRect(), m_enemies[i]->GetRect()))
 		{
 			m_Player->Attack(m_enemies[i]->GetShade());
-			delete m_enemies[i];
-			m_enemies.erase(m_enemies.begin() + i);
-			m_enemies.push_back(CreateNewEnemy());
+			const int PLAYER_LIVES{ m_Player->GetLives()};
+			
+			if (PLAYER_LIVES > 0)
+			{
+				delete m_enemies[i];
+				m_enemies.erase(m_enemies.begin() + i);
+				m_enemies.push_back(CreateNewEnemy());
+			}
+			else
+			{
+				///GAME DEAD
+			}
 		}
 	}
 }
@@ -55,7 +64,7 @@ void Game::Draw( ) const
 	{
 		enemy->Draw();
 	}
-	m_Player->Draw(m_MousePos);
+	m_Player->Draw(m_MousePos, GetViewPort());
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )

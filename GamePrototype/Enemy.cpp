@@ -2,15 +2,15 @@
 #include "Enemy.h"
 
 Enemy::Enemy(float x, float y, Shade shade)
-	: Square(x, y, shade.getSize()), m_Shade{shade}, m_Velocity{(float)(rand() % 50 - 25), (float)(rand() % 50 - 25)}
+	: Square(x, y, shade.GetSize()), m_Shade{shade}, m_Velocity{(float)(rand() % 50 - 25), (float)(rand() % 50 - 25)}
 {
 
 }
 
 void Enemy::Update(float elapsedSec, const Rectf& viewPort)
 {
-	m_Position.x += m_Velocity.x * elapsedSec;
-	m_Position.y += m_Velocity.y * elapsedSec;
+	m_Position.x += m_Shade.GetSpeed() * cos(m_Velocity.x * m_Velocity.y) * elapsedSec;
+	m_Position.y += m_Shade.GetSpeed() * sin(m_Velocity.x * m_Velocity.y) * elapsedSec;
 	if (m_Position.y < viewPort.bottom)
 	{
 		m_Velocity.x *= 0.8;
@@ -39,7 +39,7 @@ void Enemy::Update(float elapsedSec, const Rectf& viewPort)
 
 void Enemy::Draw() const
 {
-	DrawSquare(m_Shade.getColor());
+	DrawSquare(m_Shade.GetColor());
 }
 
 Shade& Enemy::GetShade()
