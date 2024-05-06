@@ -3,6 +3,7 @@
 #include "vector"
 class Player;
 class Enemy;
+class Texture;
 class Game : public BaseGame
 {
 public:
@@ -35,5 +36,10 @@ private:
 	Point2f m_MousePos;
 	std::vector<Enemy*> m_enemies;
 
+	Texture* m_txtDead;
+	Texture* m_txtRestart;
+	const std::string TXT_FONT_FILE{ "Painter-LxXg.ttf" };
+
+	bool m_GameIsRunning;
 	Enemy* CreateNewEnemy();
 };

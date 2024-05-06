@@ -33,6 +33,7 @@ private:
     void DrawHUD(const Rectf& viewPort) const;
 
     Texture* m_txtTargetShade;
+    Texture* m_txtLivesLeft;
     const int TXT_FONT_SIZE{ 24 };
     const std::string TXT_FONT_FILE{ "Painter-LxXg.ttf" };
 };

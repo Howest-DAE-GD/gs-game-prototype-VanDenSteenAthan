@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "Square.h"
 
+Square::Square()
+	: Square(0.f, 0.f, 1.f)
+{
+
+}
+
 Square::Square(float x, float y, float size)
 	: m_Position{ Point2f{ x, y } }, m_WIDTH{size}
 {

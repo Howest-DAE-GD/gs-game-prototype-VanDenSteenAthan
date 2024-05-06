@@ -3,10 +3,12 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Shade.h"
+#include "Texture.h"
 
 Game::Game( const Window& window ) 
 	:BaseGame{ window },
-	m_MousePos{}
+	m_MousePos{},
+	m_GameIsRunning{true}
 {
 	Initialize();
 }
@@ -23,15 +25,20 @@ void Game::Initialize( )
 	{
 		m_enemies.push_back(CreateNewEnemy());
 	}
+	m_txtDead = new Texture("You got an identity crisis!", TXT_FONT_FILE, 36.f, Color4f{ 1.f, 0.42f, 0.42f, 1.f });
+	m_txtRestart = new Texture("Press 'R' to restart.", TXT_FONT_FILE, 28.f, Color4f{ 1.f, 0.42f, 0.42f, 1.f });
 }
 
 void Game::Cleanup( )
 {
 	delete m_Player;
+	delete m_txtDead;
+	delete m_txtRestart;
 }
 
 void Game::Update( float elapsedSec )
 {
+	if (!m_GameIsRunning) return;
 	m_Player->Update(elapsedSec, GetViewPort());
 
 	for (int i{ 0 }; i < m_enemies.size(); ++i)
@@ -50,7 +57,9 @@ void Game::Update( float elapsedSec )
 			}
 			else
 			{
-				///GAME DEAD
+				m_GameIsRunning = false;
+				m_enemies.clear();
+				break;
 			}
 		}
 	}
@@ -64,7 +73,15 @@ void Game::Draw( ) const
 	{
 		enemy->Draw();
 	}
+
 	m_Player->Draw(m_MousePos, GetViewPort());
+
+	if (!m_GameIsRunning)
+	{
+		const Rectf vp{ GetViewPort() };
+		m_txtDead->Draw(Point2f{ vp.width / 2 - m_txtDead->GetWidth() / 2, vp.height / 2 - m_txtDead->GetHeight() / 2 + 25.f});
+		m_txtRestart->Draw(Point2f{ vp.width / 2 - m_txtRestart->GetWidth() / 2, vp.height / 2 - m_txtRestart->GetHeight() / 2 - m_txtDead->GetHeight()});
+	}
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
@@ -74,35 +91,37 @@ void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
 
 void Game::ProcessKeyUpEvent( const SDL_KeyboardEvent& e )
 {
-	//std::cout << "KEYUP event: " << e.keysym.sym << std::endl;
-	//switch ( e.keysym.sym )
-	//{
-	//case SDLK_LEFT:
-	//	//std::cout << "Left arrow key released\n";
-	//	break;
-	//case SDLK_RIGHT:
-	//	//std::cout << "`Right arrow key released\n";
-	//	break;
-	//case SDLK_1:
-	//case SDLK_KP_1:
-	//	//std::cout << "Key 1 released\n";
-	//	break;
-	//}
+	if (m_GameIsRunning) return;
+	switch (e.keysym.sym)
+	{
+		case SDLK_r:
+			m_GameIsRunning = true;
+			for (int i{ 0 }; i < 10; ++i)
+			{
+				m_enemies.push_back(CreateNewEnemy());
+			}
+			delete m_Player;
+			m_Player = new Player(50.f, 50.f, 50.f);
+			break;
+	}
 }
 
 void Game::ProcessMouseMotionEvent( const SDL_MouseMotionEvent& e )
 {
+	if (!m_GameIsRunning) return;
 	m_MousePos = Point2f{ (float)e.x, (float)e.y };
 }
 
 void Game::ProcessMouseDownEvent( const SDL_MouseButtonEvent& e )
 {
+	if (!m_GameIsRunning) return;
 	Point2f mousePos{ (float) e.x, (float) e.y };
 	m_Player->ProcessMouseDownEvent(mousePos);
 }
 
 void Game::ProcessMouseUpEvent( const SDL_MouseButtonEvent& e )
 {
+	if (!m_GameIsRunning) return;
 	Point2f mousePos{ (float) e.x, (float) e.y };
 	m_Player->ProcessMouseUpEvent(mousePos);
 }
@@ -115,5 +134,5 @@ void Game::ClearBackground( ) const
 
 Enemy* Game::CreateNewEnemy()
 {
-	return new Enemy(rand() % (int)GetViewPort().width, rand() % (int)GetViewPort().height, Shade((ShadeType)(rand() % 4)));
+	return new Enemy(rand() % (int)GetViewPort().width, rand() % (int)GetViewPort().height);
 }

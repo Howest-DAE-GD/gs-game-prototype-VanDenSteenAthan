@@ -7,19 +7,24 @@ Player::Player(float x, float y, float size)
 	m_progressNewShade{}, m_lives{5}, m_targetShade{ (ShadeType)0},
 	m_NEEDED_KILLS{10}
 {
-	m_txtTargetShade = nullptr;
+	m_txtTargetShade = nullptr; 
+	m_txtLivesLeft = nullptr;
 	NewTargetShade();
 }
 
 Player::~Player()
 {
 	delete m_txtTargetShade;
+	delete m_txtLivesLeft;
 }
 
 void Player::UpdateTXT()
 {
 	if(m_txtTargetShade != nullptr) delete m_txtTargetShade;
 	m_txtTargetShade = new Texture("Target: " + m_targetShade.GetShadeName(), TXT_FONT_FILE, TXT_FONT_SIZE, Color4f{0.f, 0.f, 0.f, 1.f});
+
+	if (m_txtLivesLeft != nullptr) delete m_txtLivesLeft;
+	m_txtLivesLeft = new Texture("Lives left: " + std::to_string(m_lives), TXT_FONT_FILE, TXT_FONT_SIZE, Color4f{ 0.85f, 0.85f, 0.85f, 1.f });
 }
 
 void Player::Update(float elapsedSec, const Rectf& viewPort)
@@ -90,6 +95,8 @@ void Player::DrawHUD(const Rectf& viewPort) const
 	utils::SetColor(Color4f{0.f, 0.f, 0.f, 1.f});
 	utils::DrawRect(pointTarget, m_txtTargetShade->GetWidth() + 2 * PADDING_INSIDE, m_txtTargetShade->GetHeight() + 2 * PADDING_INSIDE, 2.f);
 	m_txtTargetShade->Draw(Point2f{pointTarget.x + PADDING_INSIDE, pointTarget.y + PADDING_INSIDE});
+
+	m_txtLivesLeft->Draw(Point2f{ pointTarget.x + PADDING_INSIDE, pointTarget.y + PADDING_INSIDE - 50.f });
 }
 
 bool Player::isInside(float cursorX, float cursorY) const {
@@ -109,10 +116,10 @@ void Player::ProcessMouseUpEvent(const Point2f& e) {
 	{
 		Vector2f extraVelocity{ m_OriginalPoint.x - e.x, m_OriginalPoint.y - e.y };
 
-		if (extraVelocity.x < -150.f) extraVelocity.x = -150.f;
-		if (extraVelocity.x > 150.f) extraVelocity.x = 150.f;
-		if (extraVelocity.y < -150.f) extraVelocity.y = -150.f;
-		if (extraVelocity.y > 150.f) extraVelocity.y = 150.f;
+		if (extraVelocity.x < -200.f) extraVelocity.x = -200.f;
+		if (extraVelocity.x > 200.f) extraVelocity.x = 200.f;
+		if (extraVelocity.y < -200.f) extraVelocity.y = -200.f;
+		if (extraVelocity.y > 200.f) extraVelocity.y = 200.f;
 
 
 		m_Velocity.x = extraVelocity.x;
@@ -135,8 +142,8 @@ void Player::Attack(Shade& shade)
 	}
 	else
 	{
-		if (shade.GetShadeType() == ShadeType::Granite) m_lives = 0;
-		else --m_lives;
+		--m_lives;
+		UpdateTXT();
 	}
 }
 
