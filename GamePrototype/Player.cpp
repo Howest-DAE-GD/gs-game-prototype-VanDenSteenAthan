@@ -36,7 +36,8 @@ void Player::UpdateTXT()
 std::string Player::IntToStringPadding(int length, int score)
 {
 	std::string str = std::to_string(score);
-	int amount = length + 1 - str.length();
+	int amount = length - str.length();
+	if (length < str.length()) return "999999";
 	for (int i{ 0 }; i < amount; ++i)
 	{
 		str = "0" + str;
@@ -115,7 +116,7 @@ void Player::DrawHUD(const Rectf& viewPort) const
 
 	m_txtLivesLeft->Draw(Point2f{ pointTarget.x + PADDING_INSIDE, pointTarget.y + PADDING_INSIDE - 50.f });
 
-	m_txtScore->Draw(Point2f{ viewPort.width - m_txtScore->GetWidth() - PADDING_OUTSIDE, viewPort.height - m_txtScore->GetWidth() - PADDING_OUTSIDE});
+	m_txtScore->Draw(Point2f{ viewPort.width - m_txtScore->GetWidth() - PADDING_OUTSIDE, viewPort.height - m_txtScore->GetHeight() - PADDING_OUTSIDE});
 }
 
 bool Player::isInside(float cursorX, float cursorY) const {
@@ -151,7 +152,8 @@ void Player::Attack(Shade& shade)
 {
 	if (shade == m_TargetShade)
 	{
-		++m_progressNewShade;
+		++m_progressNewShade; 
+		m_score += 10;
 		if (m_progressNewShade == m_NEEDED_KILLS)
 		{
 			m_score += 500;
@@ -159,7 +161,6 @@ void Player::Attack(Shade& shade)
 			m_Shade = shade;
 			NewTargetShade();
 		}
-		else m_score += 10;
 	}
 	else
 	{
