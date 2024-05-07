@@ -17,7 +17,7 @@ Shade::Shade(ShadeType type)
         break;
     case ShadeType::Yellow:
         m_Size = 45.0f;
-        m_Speed = 110.0f;
+        m_Speed = 88.0f;
         m_Color = Color4f{ 1.f, 1.f, 0.f, 1.f };
         break;
     case ShadeType::Viridian:

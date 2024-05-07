@@ -19,7 +19,7 @@ public:
 private:
     int m_progressNewShade;
     int m_lives;
-    Shade m_targetShade;
+    Shade m_TargetShade;
 
     Shade m_Shade;
     bool m_isPressed;
@@ -27,13 +27,16 @@ private:
     Vector2f m_Velocity;
 
     const int m_NEEDED_KILLS;
+    int m_score;
 
     void NewTargetShade();
     void UpdateTXT();
     void DrawHUD(const Rectf& viewPort) const;
+    std::string IntToStringPadding(int length, int score);
 
     Texture* m_txtTargetShade;
     Texture* m_txtLivesLeft;
+    Texture* m_txtScore;
     const int TXT_FONT_SIZE{ 24 };
     const std::string TXT_FONT_FILE{ "Painter-LxXg.ttf" };
 };

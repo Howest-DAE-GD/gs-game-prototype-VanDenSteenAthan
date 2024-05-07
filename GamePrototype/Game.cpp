@@ -95,13 +95,14 @@ void Game::ProcessKeyUpEvent( const SDL_KeyboardEvent& e )
 	switch (e.keysym.sym)
 	{
 		case SDLK_r:
-			m_GameIsRunning = true;
 			for (int i{ 0 }; i < 10; ++i)
 			{
 				m_enemies.push_back(CreateNewEnemy());
 			}
 			delete m_Player;
 			m_Player = new Player(50.f, 50.f, 50.f);
+
+			m_GameIsRunning = true;
 			break;
 	}
 }
