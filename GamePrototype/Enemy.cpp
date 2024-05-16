@@ -13,38 +13,37 @@ Enemy::Enemy(float x, float y, ShadeType type)
 	SetSquare(x, y, m_Shade.GetSize());
 }
 
-#include <iostream>
 void Enemy::Update(float elapsedSec, const Rectf& viewPort)
 {
 	m_Position.x += m_Shade.GetSpeed() * sin(m_Velocity.x) * elapsedSec;
 	m_Position.y += m_Shade.GetSpeed() * sin(m_Velocity.y) * elapsedSec;
 
-	if (m_Velocity.x == 0.f) m_Velocity.x = 1.f;
-	if (m_Velocity.y == 0.f) m_Velocity.y = 1.f;
+	if (m_Velocity.x == 0.f) m_Velocity.x = 5.f;
+	if (m_Velocity.y == 0.f) m_Velocity.y = 5.f;
 	
 	bool check = false;
 
 	if (m_Position.y < viewPort.bottom)
 	{
-		m_Velocity.y *= -1;
+		m_Velocity.y *=	m_Shade.GetShadeType() == ShadeType::Aqua ? -(rand() * 0.8f + 0.8f) : -1;
 		m_Position.y = 0.f;
 		check = true;
 	}
 	if (m_Position.y + m_WIDTH > viewPort.height)
 	{
-		m_Velocity.y *= -1;
+		m_Velocity.y *= m_Shade.GetShadeType() == ShadeType::Aqua ? -(rand() * 0.8f + 0.8f) : -1;
 		m_Position.y = viewPort.height - m_WIDTH;
 		check = true;
 	}
 	if (m_Position.x < viewPort.left)
 	{
-		m_Velocity.x *= -1;
+		m_Velocity.x *= m_Shade.GetShadeType() == ShadeType::Aqua ? -(rand() * 0.8f + 0.8f) : -1;
 		m_Position.x = 0.f;
 		check = true;
 	}
 	if (m_Position.x + m_WIDTH > viewPort.width)
 	{
-		m_Velocity.x *= -1;
+		m_Velocity.x *= m_Shade.GetShadeType() == ShadeType::Aqua ? -(rand() * 0.8f + 0.8f) : -1;
 		m_Position.x = viewPort.width - m_WIDTH;
 		check = true;
 	}

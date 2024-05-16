@@ -108,9 +108,9 @@ void Player::DrawHUD(const Rectf& viewPort) const
 	const float PADDING_OUTSIDE = { 15.f };
 	Point2f pointTarget{ PADDING_INSIDE ,viewPort.height - m_txtTargetShade->GetHeight() - 2 * PADDING_INSIDE - PADDING_OUTSIDE };
 
-	utils::SetColor(m_TargetShade.GetColor());
+	utils::SetColor(Color4f{ m_TargetShade.GetColor().r, m_TargetShade.GetColor().g, m_TargetShade.GetColor().b, 0.4f });
 	utils::FillRect(pointTarget, m_txtTargetShade->GetWidth() + 2 * PADDING_INSIDE, m_txtTargetShade->GetHeight() + 2 * PADDING_INSIDE);
-	utils::SetColor(Color4f{0.f, 0.f, 0.f, 1.f});
+	utils::SetColor(Color4f{0.f, 0.f, 0.f, 0.85f});
 	utils::DrawRect(pointTarget, m_txtTargetShade->GetWidth() + 2 * PADDING_INSIDE, m_txtTargetShade->GetHeight() + 2 * PADDING_INSIDE, 2.f);
 	m_txtTargetShade->Draw(Point2f{pointTarget.x + PADDING_INSIDE, pointTarget.y + PADDING_INSIDE});
 
