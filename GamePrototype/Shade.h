@@ -5,9 +5,9 @@ struct Color4f;
 enum class ShadeType
 {
     Aqua,
+    Green,
     Red,
-    Yellow,
-    Green
+    Yellow
 };
 
 class Shade {

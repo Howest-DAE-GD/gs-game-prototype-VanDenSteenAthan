@@ -136,5 +136,15 @@ void Game::ClearBackground( ) const
 
 Enemy* Game::CreateNewEnemy()
 {
-	return new Enemy(rand() % (int)GetViewPort().width, rand() % (int)GetViewPort().height);
+	const float SPACE_BETWEEN{ 80.f };
+	Point2f position;
+	do {
+		position = Point2f{ (float) (rand() % (int)GetViewPort().width), (float) (rand() % (int)GetViewPort().height) };
+	} while (
+		utils::IsOverlapping(
+			Rectf{ m_Player->GetRect().left - SPACE_BETWEEN, m_Player->GetRect().bottom - SPACE_BETWEEN, m_Player->GetRect().width + 2 * SPACE_BETWEEN, m_Player->GetRect().height + 2 * SPACE_BETWEEN }
+			, Rectf{ position.x, position.y, 80.f, 80.f }
+		)
+	);
+	return new Enemy(position.x, position.y);
 }

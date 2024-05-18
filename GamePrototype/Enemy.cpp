@@ -109,7 +109,7 @@ void Enemy::Draw(const bool isTarget) const
 {
 	const Color4f rgba = m_Shade.GetColor();
 
-	const float SCALAR = isTarget ? 1.2f : 0.8f;
+	const float SCALAR = 0.8f;
 
 	const float r = rgba.r * SCALAR;
 	const float g = rgba.g * SCALAR;
@@ -117,7 +117,10 @@ void Enemy::Draw(const bool isTarget) const
 
 	DrawSquare(m_Shade.GetColor(), Color4f{r, g, b, 1.f});
 
-	m_pSpritesheet->Draw(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH });
+	if (isTarget)
+	{
+		m_pSpritesheet->Draw(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH }, Rectf{ (m_pSpritesheet->GetWidth() / 4.f) * (int)m_Shade.GetShadeType(), 0.f, (m_pSpritesheet->GetWidth() / 4.f), m_pSpritesheet->GetHeight() });
+	}
 }
 
 Shade& Enemy::GetShade()
