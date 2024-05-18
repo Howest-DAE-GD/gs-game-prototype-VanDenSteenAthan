@@ -7,23 +7,23 @@ Shade::Shade(ShadeType type)
     switch (type) {
     case ShadeType::Aqua:
         m_Size = 45.0f;
-        m_Speed = 44.0f;
-        m_Color = Color4f{ 0.f, 1.f, 1.f, 1.f };
+        m_Speed = 72.0f;
+        m_Color = Color4f{ 0.2f, 0.9f, 0.9f, 1.f };
         break;
-    case ShadeType::Granite:
+    case ShadeType::Green:
+        m_Size = 35.0f;
+        m_Speed = 72.0f;
+        m_Color = Color4f{ 0.35f, 0.81f, 0.53f, 1.f };
+        break;
+    case ShadeType::Red:
         m_Size = 45.0f;
-        m_Speed = 44.0f;
-        m_Color = Color4f{ 0.58f, 0.252f, 0.207f, 1.f };
+        m_Speed = 72.0f;
+        m_Color = Color4f{ 0.68f, 0.322f, 0.287f, 1.f };
         break;
     case ShadeType::Yellow:
         m_Size = 45.0f;
-        m_Speed = 88.0f;
-        m_Color = Color4f{ 1.f, 1.f, 0.f, 1.f };
-        break;
-    case ShadeType::Viridian:
-        m_Size = 35.0f;
-        m_Speed = 44.0f;
-        m_Color = Color4f{ 0.25f, 0.51f, 0.43f, 1.f };
+        m_Speed = 102.0f;
+        m_Color = Color4f{ 0.9f, 0.9f, 0.2f, 1.f };
         break;
     }
 }
@@ -39,14 +39,14 @@ std::string Shade::GetShadeName() const
         case ShadeType::Aqua:
             return "Aqua";
             break;
-        case ShadeType::Granite:
-            return "Granite";
+        case ShadeType::Green:
+            return "Green";
+            break;
+        case ShadeType::Red:
+            return "Red";
             break;
         case ShadeType::Yellow:
             return "Yellow";
-            break;
-        case ShadeType::Viridian:
-            return "Viridian";
             break;
     }
 }

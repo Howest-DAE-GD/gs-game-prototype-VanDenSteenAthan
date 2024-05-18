@@ -36,7 +36,7 @@ void Player::UpdateTXT()
 std::string Player::IntToStringPadding(int length, int score)
 {
 	std::string str = std::to_string(score);
-	int amount = length - str.length();
+	int amount = length - (int) str.length();
 	if (length < str.length()) return "999999";
 	for (int i{ 0 }; i < amount; ++i)
 	{
@@ -45,36 +45,47 @@ std::string Player::IntToStringPadding(int length, int score)
 	return str;
 }
 
+void Player::ApplyFriction(float elapsedSec, float& velocity)
+{
+	static const float FRICTION{ 350.f };
+	static const float STOP_THRESHOLD{ 1.f };
+
+	if (std::abs(velocity) > STOP_THRESHOLD) {
+		float sign = (velocity > 0) ? -1.0f : 1.0f;
+		velocity += sign * FRICTION * elapsedSec * sin(std::abs(velocity) / FRICTION);
+	}
+	else {
+		velocity = 0.f;
+	}
+}
+
 void Player::Update(float elapsedSec, const Rectf& viewPort)
 {
 	m_Position.x += m_Velocity.x * elapsedSec;
 	m_Position.y += m_Velocity.y * elapsedSec;
 
-	m_Velocity.x *= 0.99f;
-	m_Velocity.y *= 0.99f;
+
+	ApplyFriction(elapsedSec, m_Velocity.x);
+	ApplyFriction(elapsedSec, m_Velocity.y);
 
 	if (m_Position.y < viewPort.bottom)
 	{
-		m_Velocity.x *= 0.8;
-		m_Velocity.y *= -0.8;
+		m_Velocity.y *= -1.2f;
 		m_Position.y = 0.f;
 	}
 	if (m_Position.y + m_WIDTH > viewPort.height)
 	{
-		m_Velocity.x *= 0.8;
-		m_Velocity.y *= -0.8;
+		m_Velocity.y *= -1.2f;
 		m_Position.y = viewPort.height - m_WIDTH;
 	}
 	if (m_Position.x < viewPort.left)
 	{
-		m_Velocity.x *= -0.8;
-		m_Velocity.y *= 0.8;
+		m_Velocity.x *= -1.2f;
 		m_Position.x = 0.f;
 	}
 	if (m_Position.x + m_WIDTH > viewPort.width)
 	{
-		m_Velocity.x *= -0.8;
-		m_Velocity.y *= 0.8;
+		m_Velocity.x *= -1.2f;
 		m_Position.x = viewPort.width - m_WIDTH;
 	}
 }
@@ -89,7 +100,7 @@ void Player::Draw(const Point2f& currMousePos, const Rectf& viewPort) const
 	utils::SetColor(Color4f{ m_TargetShade.GetColor().r, m_TargetShade.GetColor().g, m_TargetShade.GetColor().b, ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
 	utils::FillRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH * ((float)m_progressNewShade / (float)m_NEEDED_KILLS) });
 
-	utils::SetColor(Color4f{ 0.f, 0.f, 0.f, 0.85f });
+	utils::SetColor(Color4f{ 0.9f, 0.9f, 0.9f, 0.85f });
 	utils::DrawRect(Rectf{ m_Position.x, m_Position.y, m_WIDTH, m_WIDTH }, 3.f);
 
 	if (m_isPressed)
@@ -131,16 +142,17 @@ void Player::ProcessMouseDownEvent(const Point2f& e){
 	}
 }
 
+
 void Player::ProcessMouseUpEvent(const Point2f& e) {
 	if (m_isPressed)
 	{
-		Vector2f extraVelocity{ m_OriginalPoint.x - e.x, m_OriginalPoint.y - e.y };
+		const float SCALE{ 2.5f };
+		Vector2f extraVelocity{ SCALE * (m_OriginalPoint.x - e.x), SCALE * (m_OriginalPoint.y - e.y) };
 
-		if (extraVelocity.x < -200.f) extraVelocity.x = -200.f;
-		if (extraVelocity.x > 200.f) extraVelocity.x = 200.f;
-		if (extraVelocity.y < -200.f) extraVelocity.y = -200.f;
-		if (extraVelocity.y > 200.f) extraVelocity.y = 200.f;
-
+		if (extraVelocity.x < -485.f) extraVelocity.x = -485.f;
+		if (extraVelocity.x > 485.f) extraVelocity.x = 485.f;
+		if (extraVelocity.y < -485.f) extraVelocity.y = -485.f;
+		if (extraVelocity.y > 485.f) extraVelocity.y = 485.f;
 
 		m_Velocity.x = extraVelocity.x;
 		m_Velocity.y = extraVelocity.y;
@@ -153,10 +165,11 @@ void Player::Attack(Shade& shade)
 	if (shade == m_TargetShade)
 	{
 		++m_progressNewShade; 
-		m_score += 10;
+		m_score += 100;
 		if (m_progressNewShade == m_NEEDED_KILLS)
 		{
-			m_score += 500;
+			++m_lives;
+			m_score += 5000;
 			m_progressNewShade = 0;
 			m_Shade = shade;
 			NewTargetShade();
@@ -182,4 +195,9 @@ void Player::NewTargetShade()
 int Player::GetLives() const
 {
 	return m_lives;
+}
+
+Shade Player::GetTargetShade() const
+{
+	return m_TargetShade;
 }

@@ -16,6 +16,8 @@ public:
     void ProcessMouseUpEvent(const Point2f& e);
 
     int GetLives() const;
+    Shade GetTargetShade() const;
+
 private:
     int m_progressNewShade;
     int m_lives;
@@ -33,6 +35,8 @@ private:
     void UpdateTXT();
     void DrawHUD(const Rectf& viewPort) const;
     std::string IntToStringPadding(int length, int score);
+
+    void ApplyFriction(float elapsedSec, float& velocity);
 
     Texture* m_txtTargetShade;
     Texture* m_txtLivesLeft;

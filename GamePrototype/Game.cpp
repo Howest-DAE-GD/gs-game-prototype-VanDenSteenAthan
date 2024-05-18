@@ -71,7 +71,7 @@ void Game::Draw( ) const
 
 	for (Enemy* enemy : m_enemies)
 	{
-		enemy->Draw();
+		enemy->Draw(enemy->GetShade() == m_Player->GetTargetShade());
 	}
 
 	m_Player->Draw(m_MousePos, GetViewPort());
